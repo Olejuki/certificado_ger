@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Certificados</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border: 5px solid #006400; /* Dark green border */
+            background-image: url('https://www.transparenttextures.com/patterns/linen.png'); /* Subtle background pattern */
+            background-size: cover;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        label {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input {
+            margin-bottom: 10px;
+            padding: 10px;
+            font-size: 16px;
+            width: 100%;
+            max-width: 400px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .certificado {
+            margin-top: 20px;
+            padding: 30px;
+            border: 10px solid #006400; /* Dark green border */
+            background-color: #f7e7ce; /* Burnt yellow background */
+            display: inline-block;
+            text-align: center;
+            position: relative;
+        }
+        .certificado h2 {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: #006400; /* Dark green text */
+        }
+        .certificado p {
+            font-size: 18px;
+            line-height: 1.5;
+            color: #333;
+        }
+        .certificado .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .certificado .header img {
+            height: 100px;
+            width: auto;
+        }
+        .certificado .signature {
+            margin-top: 40px;
+            text-align: right;
+            font-family: 'Great Vibes', cursive; /* Cursive font for signature */
+            font-size: 28px; /* Aumentar o tamanho da fonte */
+        }
+        .certificado .signature p {
+            margin: 0;
+        }
+        .certificado .signature .date {
+            text-align: right;
+            font-size: 22px; /* Aumentar o tamanho da fonte */
+        }
+        #downloadBtn {
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Gerador de Certificados</h1>
+        <form id="certificadoForm">
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" required>
+
+            <label for="curso">Curso:</label>
+            <input type="text" id="curso" required>
+
+            <label for="data">Data:</label>
+            <input type="date" id="data" required>
+
+            <label for="assinatura">Assinatura:</label>
+            <input type="text" id="assinatura" required>
+
+            <button type="submit">Gerar Certificado</button>
+        </form>
+        <div id="certificado" class="certificado" style="display:none;">
+            <div class="header">
+                <!-- Insira o caminho para a imagem do brasão da república -->
+                <img id="emblemaImg" src="pcsp.png" alt="Emblema">
+                <h2>POLÍCIA CIVIL DO ESTADO DE SÃO PAULO<br>GRUPO ESPECIAL DE REAÇÃO - GER</h2>
+                <!-- Insira o caminho para a imagem do brasão do exército -->
+                <img id="logoImg" src="ger.png" alt="Logo">
+            </div>
+            <p>O Instrutor Chefe do Curso de <strong id="cursoCertificado"></strong> parabeniza o Senhor <strong id="nomeCertificado"></strong>, pela conclusão bem-sucedida e exemplar deste rigoroso programa de treinamento. Esta certificação reconhece o empenho, a dedicação e a excelência demonstrados durante todo o período de formação.</p>
+            <p>Realizado em <span id="dataCertificado"></span>, o curso teve como objetivo proporcionar conhecimentos avançados e habilidades práticas indispensáveis para alcançar a excelência profissional.</p>
+            <div class="signature">
+                <p><span id="assinaturaCertificado"></span></p>
+                <p class="date">Data: <span id="dataCertificadoAssinatura"></span></p>
+            </div>
+        </div>
+        <button id="downloadBtn">Baixar Certificado</button>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/dom-to-image-more@2.9.2/dist/dom-to-image-more.min.js"></script>
+    <script>
+        document.getElementById('certificadoForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const nome = document.getElementById('nome').value;
+            const curso = document.getElementById('curso').value;
+            const data = document.getElementById('data').value;
+            const assinatura = document.getElementById('assinatura').value;
+
+            document.getElementById('nomeCertificado').textContent = nome;
+            document.getElementById('cursoCertificado').textContent = curso;
+            document.getElementById('dataCertificado').textContent = new Date(data).toLocaleDateString('pt-BR');
+            document.getElementById('dataCertificadoAssinatura').textContent = new Date().toLocaleDateString('pt-BR');
+            document.getElementById('assinaturaCertificado').textContent = 'Assinatura: ' + assinatura;
+
+            const certificadoDiv = document.getElementById('certificado');
+            certificadoDiv.style.display = 'block';
+
+            domtoimage.toPng(certificadoDiv, { cacheBust: true })
+                .then(function (dataUrl) {
+                    const link = document.createElement('a');
+                    link.href = dataUrl;
+                    link.download = 'certificado.png';
+                    document.getElementById('downloadBtn').style.display = 'block';
+                    document.getElementById('downloadBtn').onclick = function() {
+                        link.click();
+                    };
+                })
+                .catch(function (error) {
+                    console.error('Erro ao gerar a imagem do certificado:', error);
+                });
+        });
+    </script>
+</body>
+</html>
